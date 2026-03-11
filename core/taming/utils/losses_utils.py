@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from torchvision.models import VGG
-from torchvision.models.vgg import load_state_dict_from_url
+from torch.hub import load_state_dict_from_url
 
 from typing import List, Union, cast
 
