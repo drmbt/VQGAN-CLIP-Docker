@@ -103,8 +103,8 @@ with gr.Blocks(title="VQGAN-CLIP WebUI") as demo:
                 output_dir = gr.Textbox(label="Output Dir", value=defaults.get("output_dir", "/mars/output/VQGAN-CLIP"))
                 models_dir = gr.Textbox(label="Models Dir", value=defaults.get("models_dir", "./models"))
                 clip_model = gr.Textbox(label="CLIP Model", value=defaults.get("clip_model", "ViT-B/16"))
-                vqgan_checkpoint = gr.Textbox(label="VQGAN Checkpoint", value=defaults.get("vqgan_checkpoint", "./models/vqgan_imagenet_f16_16384.ckpt"))
-                vqgan_config = gr.Textbox(label="VQGAN Config", value=defaults.get("vqgan_config", "./configs/models/vqgan_imagenet_f16_16384.json"))
+                vqgan_checkpoint = gr.Textbox(label="VQGAN Checkpoint", value=defaults.get("vqgan_checkpoint", "/models/vqgan_imagenet_f16_16384.ckpt"))
+                vqgan_config = gr.Textbox(label="VQGAN Config", value=defaults.get("vqgan_config", "/configs/models/vqgan_imagenet_f16_16384.json"))
                 augments = gr.CheckboxGroup(label="Augments", choices=["Ji","Sh","Gn","Pe","Ro","Af","Et","Ts","Cr","Er","Re","Hf"], value=defaults.get("augments", ["Af", "Pe", "Ji", "Er"]))
 
             generate_btn = gr.Button("Generate", variant="primary")

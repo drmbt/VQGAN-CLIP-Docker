@@ -24,6 +24,7 @@ services:
     ports:
       - "2345:2345"
     volumes:
+      - ./models:/models
       - ./configs:/configs
       - ./core:/app/core
       - ./scripts:/app/scripts
