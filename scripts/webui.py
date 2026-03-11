@@ -131,4 +131,4 @@ if __name__ == "__main__":
 
     # Enable queueing to batch queue requests sequentially without crash
     demo.queue()
-    demo.launch(server_name="0.0.0.0" if args.listen else "127.0.0.1", server_port=2345, share=False)
+    demo.launch(server_name="0.0.0.0" if args.listen else "127.0.0.1", server_port=2345, share=False, allowed_paths=["/mars/output/VQGAN-CLIP"])
