@@ -2,6 +2,7 @@ import gradio as gr
 import json
 import os
 import random
+import shutil
 import argparse
 from core.schemas import Config
 import scripts.generate as generate
@@ -28,6 +29,24 @@ def apply_magic_wand(base_prompts):
         ]
         results.append(f"{bp}, {', '.join(modifiers)}")
     return "|".join(results)
+
+def save_uploaded_file(temp_file):
+    if not temp_file:
+        return ""
+    input_dir = "/mars/input/VQGAN-CLIP"
+    os.makedirs(input_dir, exist_ok=True)
+    filename = os.path.basename(temp_file)
+    new_path = os.path.join(input_dir, filename)
+    shutil.copy(temp_file, new_path)
+    return new_path
+
+def append_uploaded_file(temp_file, current):
+    new_path = save_uploaded_file(temp_file)
+    if not new_path:
+        return current
+    if current:
+        return f"{current}|{new_path}"
+    return new_path
 
 def load_defaults():
     try:
@@ -111,7 +130,14 @@ with gr.Blocks(title="VQGAN-CLIP WebUI") as demo:
             
             magic_btn.click(fn=apply_magic_wand, inputs=[base_prompt], outputs=[prompts])
             
-            image_prompts = gr.Textbox(label="Image Prompts (paths, separate with |)", value="|".join(defaults.get("image_prompts", [])))
+            with gr.Row():
+                image_prompts = gr.Textbox(label="Image Prompts (paths, separate with |)", value="|".join(defaults.get("image_prompts", [])), scale=3)
+                upload_image_prompt = gr.Image(label="Upload Image Prompt", type="filepath", scale=1)
+                upload_image_prompt.upload(
+                    fn=append_uploaded_file,
+                    inputs=[upload_image_prompt, image_prompts],
+                    outputs=[image_prompts]
+                )
             
             with gr.Row():
                 width = gr.Number(label="Width", value=defaults.get("size", [960, 512])[0], precision=0)
@@ -132,7 +158,11 @@ with gr.Blocks(title="VQGAN-CLIP WebUI") as demo:
                 cut_pow = gr.Number(label="Cut Power", value=defaults.get("cut_pow", 1.0))
 
             with gr.Accordion("Advanced Options", open=False):
-                init_image = gr.Textbox(label="Init Image Path", value=defaults.get("init_image", ""))
+                with gr.Row():
+                    init_image = gr.Textbox(label="Init Image Path", value=defaults.get("init_image", ""), scale=3)
+                    upload_init_image = gr.Image(label="Upload Init Image", type="filepath", scale=1)
+                    upload_init_image.upload(fn=save_uploaded_file, inputs=[upload_init_image], outputs=[init_image])
+                
                 init_noise = gr.Dropdown(label="Init Noise", choices=["", "gradient", "pixels", "fractal"], value=defaults.get("init_noise", ""))
                 init_weight = gr.Number(label="Init Weight", value=defaults.get("init_weight", 0.0))
                 mse_decay_rate = gr.Number(label="MSE Decay Rate", value=defaults.get("mse_decay_rate", 0), precision=0)
@@ -169,4 +199,4 @@ if __name__ == "__main__":
 
     # Enable queueing to batch queue requests sequentially without crash
     demo.queue()
-    demo.launch(server_name="0.0.0.0" if args.listen else "127.0.0.1", server_port=2345, share=False, allowed_paths=["/mars/output/VQGAN-CLIP"])
+    demo.launch(server_name="0.0.0.0" if args.listen else "127.0.0.1", server_port=2345, share=False, allowed_paths=["/mars/output/VQGAN-CLIP", "/mars/input/VQGAN-CLIP"])

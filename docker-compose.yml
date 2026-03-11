@@ -29,6 +29,7 @@ services:
       - ./core:/app/core
       - ./scripts:/app/scripts
       - /mars/output/VQGAN-CLIP:/mars/output/VQGAN-CLIP
+      - /mars/input/VQGAN-CLIP:/mars/input/VQGAN-CLIP
     environment:
       - DEVICE=cuda
     restart: unless-stopped
