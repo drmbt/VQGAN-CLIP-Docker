@@ -112,7 +112,7 @@ def run_generate(
         
         filename = "output"
         if len(generate.PARAMS.prompts):
-            filename = '_'.join(generate.PARAMS.prompts).replace(' ', '_')
+            filename = '_'.join(generate.PARAMS.prompts).replace(' ', '_').replace('/', '_')[:150]
         filename = f"{filename}_{generate.PARAMS.seed}"
         path = f"{generate.PARAMS.output_dir}/{filename}.png"
         

@@ -110,7 +110,7 @@ def checkin(z, losses, **kwargs):
 
     filename = "output"
     if len(PARAMS.prompts):
-        filename = '_'.join(PARAMS.prompts).replace(' ', '_')
+        filename = '_'.join(PARAMS.prompts).replace(' ', '_').replace('/', '_')[:150]
     filename = f"{filename}_{PARAMS.seed}"
 
     path = f"{PARAMS.output_dir}/{filename}.png"
