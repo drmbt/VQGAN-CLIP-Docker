@@ -128,10 +128,11 @@ def ascend_txt(z, **kwargs):
         mse_weight = kwargs['mse_weight']
         result.append(F.mse_loss(z, kwargs['z_orig']) * mse_weight / 2)
 
-        mse_decay = PARAMS.init_weight / (PARAMS.max_iterations / PARAMS.mse_decay_rate)
-        with torch.no_grad():
-          if step > 0 and step % PARAMS.mse_decay_rate == 0:
-            kwargs['mse_weight'] = max(mse_weight - mse_decay, 0)
+        if PARAMS.mse_decay_rate > 0:
+            mse_decay = PARAMS.init_weight / (PARAMS.max_iterations / PARAMS.mse_decay_rate)
+            with torch.no_grad():
+              if step > 0 and step % PARAMS.mse_decay_rate == 0:
+                kwargs['mse_weight'] = max(mse_weight - mse_decay, 0)
 
     for prompt in kwargs['prompts']:
         result.append(prompt(iii))
