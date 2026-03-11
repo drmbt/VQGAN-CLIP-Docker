@@ -19,7 +19,7 @@ def run_generate(
     prompts, image_prompts, max_iterations, save_freq, width, height,
     init_image, init_noise, init_weight, mse_decay_rate, output_dir,
     models_dir, clip_model, vqgan_checkpoint, vqgan_config, step_size,
-    cutn, cut_pow, seed, optimizer, nwarm_restarts, augments
+    cutn, cut_pow, seed, optimizer, nwarm_restarts, augments, batch_count
 ):
     prompts_list = [p.strip() for p in prompts.split("|")] if prompts else []
     image_prompts_list = [p.strip() for p in image_prompts.split("|")] if image_prompts else []
@@ -52,20 +52,29 @@ def run_generate(
     
     os.makedirs(output_dir, exist_ok=True)
     
-    generate.PARAMS = Config(**params_dict)
-    generate.PARAMS.seed = global_seed(generate.PARAMS.seed)
-    generate.main()
+    current_seed = int(seed)
+    last_path = None
     
-    filename = "output"
-    if len(generate.PARAMS.prompts):
-        filename = '_'.join(generate.PARAMS.prompts).replace(' ', '_')
-    filename = f"{filename}_{generate.PARAMS.seed}"
-    path = f"{generate.PARAMS.output_dir}/{filename}.png"
-    
-    if os.path.exists(path):
-        return path, path
-    else:
-        return None, None
+    for i in range(int(batch_count)):
+        params_dict["seed"] = current_seed
+        
+        generate.PARAMS = Config(**params_dict)
+        generate.PARAMS.seed = global_seed(generate.PARAMS.seed)
+        generate.main()
+        
+        filename = "output"
+        if len(generate.PARAMS.prompts):
+            filename = '_'.join(generate.PARAMS.prompts).replace(' ', '_')
+        filename = f"{filename}_{generate.PARAMS.seed}"
+        path = f"{generate.PARAMS.output_dir}/{filename}.png"
+        
+        if os.path.exists(path):
+            last_path = path
+            
+        if current_seed != -1:
+            current_seed += 1
+            
+        yield last_path, last_path
 
 with gr.Blocks(title="VQGAN-CLIP WebUI") as demo:
     gr.Markdown("# VQGAN-CLIP WebUI Generator")
@@ -83,6 +92,7 @@ with gr.Blocks(title="VQGAN-CLIP WebUI") as demo:
             with gr.Row():
                 max_iterations = gr.Number(label="Max Iterations", value=defaults.get("max_iterations", 250), precision=0)
                 save_freq = gr.Number(label="Save Frequency", value=defaults.get("save_freq", 50), precision=0)
+                batch_count = gr.Slider(minimum=1, maximum=100, step=1, label="Batch Count", value=1)
             
             with gr.Row():
                 seed = gr.Number(label="Seed (-1 for random)", value=defaults.get("seed", -1), precision=0)
@@ -119,7 +129,7 @@ with gr.Blocks(title="VQGAN-CLIP WebUI") as demo:
             prompts, image_prompts, max_iterations, save_freq, width, height,
             init_image, init_noise, init_weight, mse_decay_rate, output_dir,
             models_dir, clip_model, vqgan_checkpoint, vqgan_config, step_size,
-            cutn, cut_pow, seed, optimizer, nwarm_restarts, augments
+            cutn, cut_pow, seed, optimizer, nwarm_restarts, augments, batch_count
         ],
         outputs=[output_image, output_file]
     )
