@@ -1,6 +1,13 @@
-FROM pytorch/pytorch:1.9.0-cuda11.1-cudnn8-runtime
+FROM python:3.12-slim
 
 WORKDIR /app
+
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY ./requirements.txt /requirements.txt
 RUN python -m pip install -r /requirements.txt gradio
