@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY ./requirements.txt /requirements.txt
-RUN python -m pip install -r /requirements.txt gradio
+RUN python -m pip install -r /requirements.txt "gradio==4.44.1"
 
 # Download the necessary models when the docker image gets built
 RUN mkdir -p /app/models \
