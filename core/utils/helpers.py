@@ -71,3 +71,4 @@ def global_seed(seed: int):
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
     print(f"Global seed set to {seed}.")
+    return seed

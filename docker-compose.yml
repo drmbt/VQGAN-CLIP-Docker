@@ -18,6 +18,25 @@ services:
           devices:
             - capabilities: [gpu]
 
+  webui:
+    build: ./
+    command: python -m scripts.webui --listen
+    ports:
+      - "2345:2345"
+    volumes:
+      - ./configs:/configs
+      - ./core:/app/core
+      - ./scripts:/app/scripts
+      - /mars/output/VQGAN-CLIP:/mars/output/VQGAN-CLIP
+    environment:
+      - DEVICE=cuda
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+
   train:
     build: ./
     command: python -m scripts.train -c /configs/models/vqgan_custom_docker.json

@@ -111,6 +111,7 @@ def checkin(z, losses, **kwargs):
     filename = "output"
     if len(PARAMS.prompts):
         filename = '_'.join(PARAMS.prompts).replace(' ', '_')
+    filename = f"{filename}_{PARAMS.seed}"
 
     path = f"{PARAMS.output_dir}/{filename}.png"
     TF.to_pil_image(out[0].cpu()).save(path)
@@ -207,6 +208,6 @@ if __name__ == "__main__":
     print(f"Running on {DEVICE}.")
     print(PARAMS)
 
-    global_seed(PARAMS.seed)
+    PARAMS.seed = global_seed(PARAMS.seed)
 
     main()
