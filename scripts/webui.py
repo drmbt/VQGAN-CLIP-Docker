@@ -170,7 +170,7 @@ with gr.Blocks(title="VQGAN-CLIP WebUI") as demo:
                     upload_init_image.upload(fn=save_uploaded_file, inputs=[upload_init_image], outputs=[init_image])
                 
                 init_noise = gr.Dropdown(label="Init Noise", choices=["", "gradient", "pixels", "fractal"], value=defaults.get("init_noise", ""))
-                init_weight = gr.Number(label="Init Weight", value=defaults.get("init_weight", 0.0))
+                init_weight = gr.Number(label="Init Weight", value=defaults.get("init_weight", 0.0), step=0.1)
                 mse_decay_rate = gr.Number(label="MSE Decay Rate", value=defaults.get("mse_decay_rate", 0), precision=0)
                 nwarm_restarts = gr.Number(label="nwarm_restarts", value=defaults.get("nwarm_restarts", -1), precision=0)
                 
