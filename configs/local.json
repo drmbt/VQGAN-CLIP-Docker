@@ -1,12 +1,12 @@
 {
     "prompts": [
-        "Staring into the void, the void stares back, featured on ArtStation, rendered in Unreal Engine, volumetric lighting, 8k resolution, oil on canvas, matte painting."
+        "fear itself. featured on ArtStation, rendered in Unreal Engine, volumetric lighting, 8k resolution, oil on canvas, matte painting."
     ],
     "image_prompts": [],
     "max_iterations": 250,
     "save_freq": 50,
     "size": [
-        960,
+        512,
         512
     ],
     "init_image": "",
