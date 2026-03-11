@@ -58,13 +58,19 @@ def load_defaults():
 defaults = load_defaults()
 
 def run_generate(
-    prompts, image_prompts, max_iterations, save_freq, width, height,
+    base_prompt, prompts, image_prompts, max_iterations, save_freq, width, height,
     init_image, init_noise, init_weight, mse_decay_rate, output_dir,
     models_dir, clip_model, vqgan_checkpoint, vqgan_config, step_size,
     cutn, cut_pow, seed, optimizer, nwarm_restarts, augments, batch_count
 ):
     prompts_list = [p.strip() for p in prompts.split("|")] if prompts else []
+    if not prompts_list and base_prompt and base_prompt.strip():
+        prompts_list = [base_prompt.strip()]
+        
     image_prompts_list = [p.strip() for p in image_prompts.split("|")] if image_prompts else []
+    
+    if not prompts_list and not image_prompts_list:
+        raise gr.Error("Please enter at least one text prompt or image prompt!")
     
     params_dict = {
         "prompts": prompts_list,
@@ -184,7 +190,7 @@ with gr.Blocks(title="VQGAN-CLIP WebUI") as demo:
     generate_btn.click(
         fn=run_generate,
         inputs=[
-            prompts, image_prompts, max_iterations, save_freq, width, height,
+            base_prompt, prompts, image_prompts, max_iterations, save_freq, width, height,
             init_image, init_noise, init_weight, mse_decay_rate, output_dir,
             models_dir, clip_model, vqgan_checkpoint, vqgan_config, step_size,
             cutn, cut_pow, seed, optimizer, nwarm_restarts, augments, batch_count
